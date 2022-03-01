@@ -563,9 +563,23 @@ function gameDisplay() {
     if (!gameManager.gameover) {
         gameManager.endTime = new Date().getTime();
     }
+    //label
     ctx.strokeStyle = "rgb(254, 254, 254)";
     ctx === null || ctx === void 0 ? void 0 : ctx.strokeText("Flag : " + flagCounter(), 20, canvas.height - 40);
-    ctx === null || ctx === void 0 ? void 0 : ctx.strokeText("Time : " + Math.floor((gameManager.endTime - gameManager.startTime) / 1000), 20, canvas.height - 20);
+    ctx === null || ctx === void 0 ? void 0 : ctx.strokeText("Time : " + (function () {
+        if (mouse.is_init) {
+            return Math.floor((gameManager.endTime - gameManager.startTime) / 1000);
+        }
+        else {
+            return 0;
+        }
+    })(), 20, canvas.height - 20);
+    //putFlag button
+    ctx.fillStyle = "rgb(89, 157, 218)";
+    ctx === null || ctx === void 0 ? void 0 : ctx.beginPath();
+    ctx === null || ctx === void 0 ? void 0 : ctx.arc(canvas.width - 50, canvas.height - 50, 30, 0, 2 * Math.PI, false);
+    ctx === null || ctx === void 0 ? void 0 : ctx.fill();
+    ctx === null || ctx === void 0 ? void 0 : ctx.strokeText("FLAG", canvas.width - 50, canvas.height - 50);
     requestAnimationFrame(gameDisplay);
 }
 if (navigator.userAgent.indexOf("iPhone") > 0
@@ -702,20 +716,35 @@ function mouseUp(e) {
             gameManager.cursor.z -= gameManager.size.z;
         }
     }
+    if (p[0] == 89
+        && p[1] == 157
+        && p[2] == 218) {
+        putFlag();
+    }
     mouse.is_longPress = false;
 }
 ;
+function putFlag() {
+    var p = gameManager.cursor;
+    var object = cellList[p.x][p.y][p.z];
+    if (object.flag && !object.demined) {
+        cellList[p.x][p.y][p.z].flag = false;
+    }
+    else if (!object.flag && !object.demined) {
+        cellList[p.x][p.y][p.z].flag = true;
+    }
+}
 document.addEventListener("keydown", function (e) {
     switch (e.key) {
         case "f":
-            var p = gameManager.cursor;
-            var object = cellList[p.x][p.y][p.z];
-            if (object.flag && !object.demined) {
-                cellList[p.x][p.y][p.z].flag = false;
-            }
-            else if (!object.flag && !object.demined) {
-                cellList[p.x][p.y][p.z].flag = true;
-            }
+            //let p: Int3 = gameManager.cursor;
+            //let object: Cell = cellList[p.x][p.y][p.z];
+            //if(object.flag && !object.demined) {
+            //    cellList[p.x][p.y][p.z].flag = false;
+            //} else if(!object.flag && !object.demined) {
+            //    cellList[p.x][p.y][p.z].flag = true;
+            //}
+            putFlag();
             break;
         case "x":
             fixedPlane = "yz";
